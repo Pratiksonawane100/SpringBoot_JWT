@@ -8,6 +8,6 @@ import lombok.*;
 @Setter
 @Getter
 public class LoginResponseDTO {
-    String jwt;
-    Long Id;
+    private String jwt;
+    private String username;
 }

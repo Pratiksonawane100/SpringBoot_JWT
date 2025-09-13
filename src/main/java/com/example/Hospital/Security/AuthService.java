@@ -6,7 +6,9 @@ import com.example.Hospital.entity.SignupResponseDTO;
 import com.example.Hospital.entity.User;
 import com.example.Hospital.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ public class AuthService {
     private final AuthUtil authUtil;
 
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO){
         Authentication authentication = authenticationManager.authenticate(
@@ -39,13 +43,17 @@ public class AuthService {
 
         user = userRepository.save(User.builder()
                 .username(loginRequestDTO.getUsername())
-                .password(loginRequestDTO.getPassword())
+                .password(passwordEncoder.encode(loginRequestDTO.getPassword()))
                 .build()
         );
 
-        return new SignupResponseDTO(user.geId() , user.getUsername());
+        return new SignupResponseDTO(user.getId() , user.getUsername());
 
     }
 
+    // @Bean
+    // public PasswordEncoder passwordEncoder() {
+    //     return new BCryptPasswordEncoder();
+    // }
 
 }

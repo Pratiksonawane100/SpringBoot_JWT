@@ -14,19 +14,41 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "User_Details")
+@Table(name = "user_details") // table name should not start with uppercase
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(unique = true)
+    @Column(unique = true, nullable = false) // ✅ fixed
     private String username;
+
+    @Column(nullable = false)
     private String password;
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities(){
-        return List.of();
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(); // no roles yet
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
