@@ -8,7 +8,9 @@ import com.example.Hospital.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -26,15 +28,22 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO){
+    try {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequestDTO.getUsername() ,loginRequestDTO.getPassword())
+            new UsernamePasswordAuthenticationToken(
+                loginRequestDTO.getUsername(),
+                loginRequestDTO.getPassword()
+            )
         );
         User user = (User) authentication.getPrincipal();
-
         String token = authUtil.generateAccessToken(user);
-
         return new LoginResponseDTO(token, user.getUsername());
+    } catch (AuthenticationException ex) {
+        // throw a ResponseStatusException so controller returns 401
+        throw new org.springframework.web.server.ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
     }
+}
+
 
     public SignupResponseDTO signup(LoginRequestDTO loginRequestDTO){
         User user = userRepository.findByUsername(loginRequestDTO.getUsername()).orElse(null);

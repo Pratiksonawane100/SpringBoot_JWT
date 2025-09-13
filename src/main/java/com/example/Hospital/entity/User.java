@@ -14,14 +14,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "user_details") // table name should not start with uppercase
+@Table(name = "user_details") // lowercase table name is safer
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false) // ✅ fixed
+    @Column(unique = true, nullable = false) // ✅ fixed from @JoinColumn
     private String username;
 
     @Column(nullable = false)
@@ -29,7 +29,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(); // no roles yet
+        return List.of(); // ✅ no roles yet
     }
 
     @Override

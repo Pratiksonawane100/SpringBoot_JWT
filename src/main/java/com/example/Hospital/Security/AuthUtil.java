@@ -28,4 +28,5 @@ public class AuthUtil {
                 .signWith(getSecreKey())
                 .compact();
     }
+    
 }
